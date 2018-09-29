@@ -1,7 +1,7 @@
-//*** ALL IMPLEMENTATION CODE SOURCED 
+//*** THIS IMPLEMENTATION CODE WAS SOURCED
 //FROM https://www.geeksforgeeks.org/lowest-common-ancestor-binary-tree-set-1/ ***
 
-// Java Program for Lowest Common Ancestor in a Binary Tree
+// Java Program for Lowest Common Ancestor in a Binary Tree 
 // A O(n) solution to find LCA of two given values n1 and n2 
 import java.util.ArrayList; 
 import java.util.List; 
@@ -42,7 +42,7 @@ public class BT_NoParentPtr_Solution1
         int i; 
         for (i = 0; i < path1.size() && i < path2.size(); i++) { 
               
-         
+        
             if (!path1.get(i).equals(path2.get(i))) 
                 break; 
         } 
@@ -101,4 +101,4 @@ public class BT_NoParentPtr_Solution1
       
     } 
 } 
- 
+
