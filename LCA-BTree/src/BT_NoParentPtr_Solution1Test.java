@@ -30,5 +30,14 @@ public class BT_NoParentPtr_Solution1Test {
 		    assertEquals("Checking LCA", 1, BT_NoParentPtr_Solution1.findLCA(3, 4));
 		    assertEquals("Checking LCA", 2, BT_NoParentPtr_Solution1.findLCA(2, 4));
 	    }
+	 
+	 @Test
+	    public void testFindLCAInternal()
+	    {
+
+		    assertEquals("Checking null root", -1, BT_NoParentPtr_Solution1.findLCAInternal(null, 1, 2));
+
+	    }
+
 
 }

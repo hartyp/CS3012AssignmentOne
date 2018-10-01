@@ -31,7 +31,7 @@ public class BT_NoParentPtr_Solution1
         return findLCAInternal(root, n1, n2); 
     } 
   
-    private static int findLCAInternal(Node root, int n1, int n2) { 
+    public static int findLCAInternal(Node root, int n1, int n2) { 
   
         if (!findPath(root, n1, path1) || !findPath(root, n2, path2)) { 
             System.out.println((path1.size() > 0) ? "n1 is present" : "n1 is missing"); 
