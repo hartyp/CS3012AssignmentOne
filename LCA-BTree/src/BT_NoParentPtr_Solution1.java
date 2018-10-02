@@ -21,8 +21,8 @@ public class BT_NoParentPtr_Solution1
 { 
   
     static Node root; 
-    private static List<Integer> path1 = new ArrayList<>(); 
-    private static List<Integer> path2 = new ArrayList<>(); 
+    public static List<Integer> path1 = new ArrayList<>(); 
+    public static List<Integer> path2 = new ArrayList<>(); 
   
     // Finds the path from root node to given root of the tree. 
     static int findLCA(int n1, int n2) { 
@@ -52,7 +52,7 @@ public class BT_NoParentPtr_Solution1
       
     // Finds the path from root node to given root of the tree, Stores the 
     // path in a vector path[], returns true if path exists otherwise false 
-    private static boolean findPath(Node root, int n, List<Integer> path) 
+    public static boolean findPath(Node root, int n, List<Integer> path) 
     { 
         // base case 
         if (root == null) { 
