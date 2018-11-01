@@ -1,92 +1,125 @@
-//*** THIS IMPLEMENTATION CODE WAS SOURCED
-//FROM https://www.geeksforgeeks.org/lowest-common-ancestor-binary-tree-set-1/ ***
+import java.util.ArrayList;
 
-// Java Program for Lowest Common Ancestor in a Binary Tree 
-// A O(n) solution to find LCA of two given values n1 and n2 
-import java.util.ArrayList; 
-import java.util.List; 
-  
-// A Binary Tree node 
-class Node { 
-    int data; 
-    Node left, right; 
-  
-    Node(int value) { 
-        data = value; 
-        left = right = null; 
-    } 
-} 
-  
-public class BT_NoParentPtr_Solution1  
-{ 
-  
-    static Node root; 
-    public static List<Integer> path1 = new ArrayList<>(); 
-    public static List<Integer> path2 = new ArrayList<>(); 
-  
-    // Finds the path from root node to given root of the tree. 
-    static int findLCA(int n1, int n2) { 
-        path1.clear(); 
-        path2.clear(); 
-        return findLCAInternal(root, n1, n2); 
-    } 
-  
-    public static int findLCAInternal(Node root, int n1, int n2) { 
-  
-        if (!findPath(root, n1, path1) || !findPath(root, n2, path2)) { 
-            System.out.println((path1.size() > 0) ? "n1 is present" : "n1 is missing"); 
-            System.out.println((path2.size() > 0) ? "n2 is present" : "n2 is missing"); 
-            return -1; 
-        } 
-  
-        int i; 
-        for (i = 0; i < path1.size() && i < path2.size(); i++) { 
-              
-        
-            if (!path1.get(i).equals(path2.get(i))) 
-                break; 
-        } 
-  
-        return path1.get(i-1); 
-    } 
-      
-    // Finds the path from root node to given root of the tree, Stores the 
-    // path in a vector path[], returns true if path exists otherwise false 
-    public static boolean findPath(Node root, int n, List<Integer> path) 
-    { 
-        // base case 
-        if (root == null) { 
-            return false; 
-        } 
-          
-        // Store this node . The node will be removed if 
-        // not in path from root to n. 
-        path.add(root.data); 
-  
-        if (root.data == n) { 
-            return true; 
-        } 
-  
-        if (root.left != null && findPath(root.left, n, path)) { 
-            return true; 
-        } 
-  
-        if (root.right != null && findPath(root.right, n, path)) { 
-            return true; 
-        } 
-  
-        // If not present in subtree rooted with root, remove root from 
-        // path[] and return false 
-        path.remove(path.size()-1); 
-  
-        return false; 
-    } 
-  
-    // Driver code 
-    public static void main(String[] args) 
-    { 
-       
-      
-    } 
-} 
 
+public class BT_NoParentPtr_Solution1 {
+
+	
+
+		public static ArrayList<Node> getLCA(ArrayList<Node> listOfNodes, Node x, Node y) {
+		// Check if it is acyclic
+		if (listOfNodes == null || x == null || y == null || listOfNodes.size() == 0 || !listOfNodes.contains(x)
+				|| !listOfNodes.contains(y))
+			return null;
+		if (!acyclicTest(listOfNodes))
+			return null;
+		ArrayList<Node> listOfRoots = new ArrayList<Node>();
+		ArrayList<Node> commonAncestors = new ArrayList<Node>();
+		ArrayList<Node> ancesX = new ArrayList<Node>();
+		ArrayList<Node> ancesY = new ArrayList<Node>();
+
+		for (int i = 0; i < listOfNodes.size(); i++) {
+			if (listOfNodes.get(i).indeg == 0) {
+				listOfRoots.add(listOfNodes.get(i));
+			}
+		}
+
+		ancesX.add(x);
+		ancesY.add(y);
+		for (int i = 0; i < listOfRoots.size(); i++) {
+			find(listOfRoots.get(i), ancesX, ancesY);
+		}
+		commonAncestors = overlap(ancesX, ancesY);
+		if (commonAncestors.size() == 0)
+			return null;
+		while (commonAncestors.size() != 1) {
+			for (int i = 0; i < commonAncestors.size(); i++) {
+
+				if (lookForImpasse(commonAncestors)) {
+					return commonAncestors;
+				}
+
+				else {
+					if (overlap(commonAncestors, commonAncestors.get(i).edgesTo).size() != 0) {
+						commonAncestors.remove(i);
+					}
+				}
+			}
+		}
+		return commonAncestors;
+
+	}
+
+	private static boolean lookForImpasse(ArrayList<Node> commonAncestors) {
+		for (int i = 0; i < commonAncestors.size(); i++) {
+			Node tmp = commonAncestors.get(i);
+			if (overlap(commonAncestors, tmp.edgesTo).size() != 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static void find(Node root, ArrayList<Node> ancesX, ArrayList<Node> ancesY) {
+		if (root.edgesTo == null || root.edgesTo.size() == 0)
+			return;
+
+		for (int i = 0; i < root.edgesTo.size(); i++) {
+			Node tmp = (Node) root.edgesTo.get(i);
+			if (!(ancesX.contains(tmp) || ancesY.contains(tmp)))
+				find(tmp, ancesX, ancesY);
+			if (ancesX.contains(tmp))
+				ancesX.add(root);
+			if (ancesY.contains(tmp))
+				ancesY.add(root);
+		}
+	}
+
+	public static boolean acyclicTest(ArrayList<Node> list) {
+
+		if (list == null || list.size() == 0)
+			return true;
+
+		for (int i = 0; i < list.size(); i++) {
+			ArrayList<Node> inspected = new ArrayList<Node>();
+			ArrayList<Node> stack = new ArrayList<Node>();
+			Node tmp = list.get(i);
+			boolean cyclical = false;
+			cyclical = checkCycle(list, tmp, inspected, stack, cyclical);
+			if (cyclical) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static boolean checkCycle(ArrayList<Node> list, Node tmp, ArrayList<Node> inspected, ArrayList<Node> stack,
+			boolean cyclical) {
+		inspected.add(tmp);
+		stack.add(tmp);
+
+		for (int i = 0; i < tmp.edgesTo.size(); i++) {
+			Node a = (Node) tmp.edgesTo.get(i);
+			if (!inspected.contains(a)) {
+				cyclical = cyclical || checkCycle(list, a, inspected, stack, cyclical);
+			} else if (stack.contains(a)) {
+				cyclical = true;
+				return cyclical;
+			}
+		}
+		stack.remove(tmp);
+		return cyclical;
+	}
+
+	public static ArrayList<Node> overlap(ArrayList<Node> firstList, ArrayList<Node> secondList) {
+		ArrayList<Node> list = new ArrayList<Node>();
+
+		for (Node n : firstList) {
+			if (secondList.contains(n)) {
+				list.add(n);
+			}
+		}
+
+		return list;
+	}
+
+}

@@ -1,5 +1,6 @@
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -7,64 +8,69 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 public class BT_NoParentPtr_Solution1Test {
-	
-	 @Test
-	    public void testConstructor()
-	    {
-	        new BT_NoParentPtr_Solution1();
-	    }
-	 
-	 @Test
-	    public void testFindLCA()
-	    {
-		    BT_NoParentPtr_Solution1 tree = new BT_NoParentPtr_Solution1(); 
-	        BT_NoParentPtr_Solution1.root = new Node(1); 
-	        BT_NoParentPtr_Solution1.root.left = new Node(2); 
-	        BT_NoParentPtr_Solution1.root.right = new Node(3); 
-	        BT_NoParentPtr_Solution1.root.left.left = new Node(4); 
-	        BT_NoParentPtr_Solution1.root.left.right = new Node(5); 
-	        BT_NoParentPtr_Solution1.root.right.left = new Node(6); 
-	        BT_NoParentPtr_Solution1.root.right.right = new Node(7); 
-		    assertEquals("Checking LCA", 2, BT_NoParentPtr_Solution1.findLCA(4, 5));
-		    assertEquals("Checking LCA", 1, BT_NoParentPtr_Solution1.findLCA(4, 6));
-		    assertEquals("Checking LCA", 1, BT_NoParentPtr_Solution1.findLCA(3, 4));
-		    assertEquals("Checking LCA", 2, BT_NoParentPtr_Solution1.findLCA(2, 4));
-	    }
-	 
-	 @Test
-	    public void testFindLCAInternal()
-	    {
 
-		    assertEquals("Checking null root", -1, BT_NoParentPtr_Solution1.findLCAInternal(null, 1, 2));
-		    BT_NoParentPtr_Solution1 tree = new BT_NoParentPtr_Solution1(); 
-	        BT_NoParentPtr_Solution1.root = new Node(1); 
-	        BT_NoParentPtr_Solution1.root.left = new Node(2); 
-	        BT_NoParentPtr_Solution1.root.right = new Node(3); 
-	        BT_NoParentPtr_Solution1.root.left.left = new Node(4); 
-	        BT_NoParentPtr_Solution1.root.left.right = new Node(5); 
-	        BT_NoParentPtr_Solution1.root.right.left = new Node(6); 
-	        BT_NoParentPtr_Solution1.root.right.right = new Node(7);
-		    assertEquals("Checking non-null root", 2, BT_NoParentPtr_Solution1.findLCAInternal(tree.root, 1, 2));
+	@Test
+	public void testConstructor() {
+		new BT_NoParentPtr_Solution1();
+	}
 
-	    }
-	 
-	 @Test
-	    public void testFindPath()
-	    {
+	@Test
+	public void testGetLCA() {
+		Node a = new Node("a", 3);
+		Node b = new Node("b", 4);
+		Node c = new Node("c", 55);
+		Node d = new Node("d", 152);
+		a.link(b);
+		b.link(c);
+		a.link(d);
+		assertEquals("Testing null", null, BT_NoParentPtr_Solution1.getLCA(null, null, null));
+		assertEquals("Testing null", null, BT_NoParentPtr_Solution1.getLCA(null, a, null));
 
-		    assertEquals("Checking null root", false, BT_NoParentPtr_Solution1.findPath(null, 1, BT_NoParentPtr_Solution1.path1));
-		    BT_NoParentPtr_Solution1 tree = new BT_NoParentPtr_Solution1(); 
-	        BT_NoParentPtr_Solution1.root = new Node(1); 
-	        BT_NoParentPtr_Solution1.root.left = new Node(2); 
-	        BT_NoParentPtr_Solution1.root.right = new Node(3); 
-	        BT_NoParentPtr_Solution1.root.left.left = new Node(4); 
-	        BT_NoParentPtr_Solution1.root.left.right = new Node(5); 
-	        BT_NoParentPtr_Solution1.root.right.left = new Node(6); 
-	        BT_NoParentPtr_Solution1.root.right.right = new Node(7);
-		    assertEquals("Checking non-null root", true, BT_NoParentPtr_Solution1.findPath(tree.root, 1, BT_NoParentPtr_Solution1.path1));
+		ArrayList<Node> list = new ArrayList<Node>();
+		assertEquals("Check empty", null, BT_NoParentPtr_Solution1.getLCA(list, a, b));
+		list.add(a);
+		list.add(b);
+		assertEquals("Missing node", null, BT_NoParentPtr_Solution1.getLCA(list, c, b));
+		list.add(c);
+		list.add(d);
+		ArrayList<Node> outcomes = new ArrayList<Node>();
+		outcomes.add(a);
+		assertEquals("One Common Ancestor", false, outcomes.retainAll(BT_NoParentPtr_Solution1.getLCA(list, c, d)));
 
-	    }
+		Node e = new Node("e", 234);
+		e.link(b);
+		list.add(e);
+		assertEquals("One Common Ancestor.", false, outcomes.retainAll(BT_NoParentPtr_Solution1.getLCA(list, c, d)));
+		e.link(d);
+		outcomes.add(e);
+		assertEquals("Two Common Ancestors.", false, outcomes.retainAll(BT_NoParentPtr_Solution1.getLCA(list, c, d)));
 
+	}
 
+	@Test
+	public void testAcyclic() {
+		assertEquals("Testing null", true, BT_NoParentPtr_Solution1.acyclicTest(null));
+		ArrayList<Node> list = new ArrayList<Node>();
+		Node a = new Node("a", 2);
+		list.add(a);
+		assertEquals("Single element", true, BT_NoParentPtr_Solution1.acyclicTest(list));
+		Node b = new Node("b", 6);
+		Node c = new Node("c", 53);
+		Node d = new Node("d", 144);
+		a.link(b);
+		b.link(c);
+		a.link(d);
+		list.add(b);
+		list.add(c);
+		list.add(d);
+
+		assertEquals("Checking acyclic", true, BT_NoParentPtr_Solution1.acyclicTest(list));
+		d.link(a);
+		assertEquals("Checking acyclic", false, BT_NoParentPtr_Solution1.acyclicTest(list));
+		c.link(a);
+		assertEquals("Checking acyclic", false, BT_NoParentPtr_Solution1.acyclicTest(list));
+		c.link(c);
+		assertEquals("Checking acyclic", false, BT_NoParentPtr_Solution1.acyclicTest(list));
+	}
 
 }
