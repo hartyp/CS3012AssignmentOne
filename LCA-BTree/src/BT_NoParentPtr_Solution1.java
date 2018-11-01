@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-
 public class BT_NoParentPtr_Solution1 {
 
 	public class Node<T> {
@@ -43,7 +42,7 @@ public class BT_NoParentPtr_Solution1 {
 			if (childNode == null) {
 				return;
 			}
-			
+
 			this.edgesTo.remove(childNode);
 			childNode.indeg--;
 		}
@@ -52,11 +51,48 @@ public class BT_NoParentPtr_Solution1 {
 			return this.key.toString();
 		}
 	}
-	
+
 	public static ArrayList<Node> getLCA(ArrayList<Node> listOfNodes, Node x, Node y) {
-		//Check if it is acyclic
-	
-		
+		// Check if it is acyclic
+		if (listOfNodes == null || x == null || y == null || listOfNodes.size() == 0 || !listOfNodes.contains(x)
+				|| !listOfNodes.contains(y))
+			return null;
+		if (!acyclicTest(listOfNodes))
+			return null;
+		ArrayList<Node> listOfRoots = new ArrayList<Node>();
+		ArrayList<Node> commonAncestors = new ArrayList<Node>();
+		ArrayList<Node> ancesX = new ArrayList<Node>();
+		ArrayList<Node> ancesY = new ArrayList<Node>();
+
+		for (int i = 0; i < listOfNodes.size(); i++) {
+			if (listOfNodes.get(i).indeg == 0) {
+				listOfRoots.add(listOfNodes.get(i));
+			}
+		}
+
+		ancesX.add(x);
+		ancesY.add(y);
+		for (int i = 0; i < listOfRoots.size(); i++) {
+			find(listOfRoots.get(i), ancesX, ancesY);
+		}
+		commonAncestors = overlap(ancesX, ancesY);
+		if (commonAncestors.size() == 0)
+			return null;
+		while (commonAncestors.size() != 1) {
+			for (int i = 0; i < commonAncestors.size(); i++) {
+
+				if (lookForImpasse(commonAncestors)) {
+					return commonAncestors;
+				}
+
+				else {
+					if (overlap(commonAncestors, commonAncestors.get(i).edgesTo).size() != 0) {
+						commonAncestors.remove(i);
+					}
+				}
+			}
+		}
+		return commonAncestors;
 
 	}
 
@@ -121,7 +157,6 @@ public class BT_NoParentPtr_Solution1 {
 		return cyclical;
 	}
 
-
 	public static ArrayList<Node> overlap(ArrayList<Node> firstList, ArrayList<Node> secondList) {
 		ArrayList<Node> list = new ArrayList<Node>();
 
@@ -133,6 +168,5 @@ public class BT_NoParentPtr_Solution1 {
 
 		return list;
 	}
-
 
 }
