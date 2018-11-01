@@ -1,10 +1,12 @@
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
 
 public class BT_NoParentPtr_Solution1Test {
 	
@@ -15,56 +17,41 @@ public class BT_NoParentPtr_Solution1Test {
 	    }
 	 
 	 @Test
-	    public void testFindLCA()
+	    public void testGetLCA()
 	    {
-		    BT_NoParentPtr_Solution1 tree = new BT_NoParentPtr_Solution1(); 
-	        BT_NoParentPtr_Solution1.root = new Node(1); 
-	        BT_NoParentPtr_Solution1.root.left = new Node(2); 
-	        BT_NoParentPtr_Solution1.root.right = new Node(3); 
-	        BT_NoParentPtr_Solution1.root.left.left = new Node(4); 
-	        BT_NoParentPtr_Solution1.root.left.right = new Node(5); 
-	        BT_NoParentPtr_Solution1.root.right.left = new Node(6); 
-	        BT_NoParentPtr_Solution1.root.right.right = new Node(7); 
-		    assertEquals("Checking LCA", 2, BT_NoParentPtr_Solution1.findLCA(4, 5));
-		    assertEquals("Checking LCA", 1, BT_NoParentPtr_Solution1.findLCA(4, 6));
-		    assertEquals("Checking LCA", 1, BT_NoParentPtr_Solution1.findLCA(3, 4));
-		    assertEquals("Checking LCA", 2, BT_NoParentPtr_Solution1.findLCA(2, 4));
+		 	Node a = new Node("a",3);
+		    Node b = new Node("b",4);
+		    Node c = new Node("c",55);
+		    Node d = new Node("d",152);
+		    
+		    a.link(b);
+		    b.link(c);
+		    a.link(d);
+		    assertEquals("Testing null", null, BT_NoParentPtr_Solution1.getLCA(null, null, null));
+		    assertEquals("Testing null", null, BT_NoParentPtr_Solution1.getLCA(null, a, null));
+		    
+		    ArrayList<Node> list = new ArrayList<Node>();
+		    assertEquals("Check empty", null, BT_NoParentPtr_Solution1.getLCA(list, a, b));
+		   
+		    list.add(a);
+		    list.add(b);
+		    assertEquals("Missing node", null, BT_NoParentPtr_Solution1.getLCA(list, c, b));
+		    list.add(c);
+		    list.add(d);
+		    ArrayList<Node> outcomes = new ArrayList<Node>();
+		    outcomes.add(a);
+		    assertEquals("One Common Ancestor", false, outcomes.retainAll(BT_NoParentPtr_Solution1.getLCA(list, c, d)));
+		    
+		    Node e = new Node("e",234);
+		    e.link(b);
+		    list.add(e);
+		    assertEquals("One Common Ancestor.", false, outcomes.retainAll(BT_NoParentPtr_Solution1.getLCA(list, c, d)));
+		    e.link(d);
+		    outcomes.add(e);
+		    assertEquals("Two Common Ancestors.", false, outcomes.retainAll(BT_NoParentPtr_Solution1.getLCA(list, c, d)));
+		    
 	    }
 	 
-	 @Test
-	    public void testFindLCAInternal()
-	    {
-
-		    assertEquals("Checking null root", -1, BT_NoParentPtr_Solution1.findLCAInternal(null, 1, 2));
-		    BT_NoParentPtr_Solution1 tree = new BT_NoParentPtr_Solution1(); 
-	        BT_NoParentPtr_Solution1.root = new Node(1); 
-	        BT_NoParentPtr_Solution1.root.left = new Node(2); 
-	        BT_NoParentPtr_Solution1.root.right = new Node(3); 
-	        BT_NoParentPtr_Solution1.root.left.left = new Node(4); 
-	        BT_NoParentPtr_Solution1.root.left.right = new Node(5); 
-	        BT_NoParentPtr_Solution1.root.right.left = new Node(6); 
-	        BT_NoParentPtr_Solution1.root.right.right = new Node(7);
-		    assertEquals("Checking non-null root", 2, BT_NoParentPtr_Solution1.findLCAInternal(tree.root, 1, 2));
-
-	    }
-	 
-	 @Test
-	    public void testFindPath()
-	    {
-
-		    assertEquals("Checking null root", false, BT_NoParentPtr_Solution1.findPath(null, 1, BT_NoParentPtr_Solution1.path1));
-		    BT_NoParentPtr_Solution1 tree = new BT_NoParentPtr_Solution1(); 
-	        BT_NoParentPtr_Solution1.root = new Node(1); 
-	        BT_NoParentPtr_Solution1.root.left = new Node(2); 
-	        BT_NoParentPtr_Solution1.root.right = new Node(3); 
-	        BT_NoParentPtr_Solution1.root.left.left = new Node(4); 
-	        BT_NoParentPtr_Solution1.root.left.right = new Node(5); 
-	        BT_NoParentPtr_Solution1.root.right.left = new Node(6); 
-	        BT_NoParentPtr_Solution1.root.right.right = new Node(7);
-		    assertEquals("Checking non-null root", true, BT_NoParentPtr_Solution1.findPath(tree.root, 1, BT_NoParentPtr_Solution1.path1));
-
-	    }
-
 
 
 }
