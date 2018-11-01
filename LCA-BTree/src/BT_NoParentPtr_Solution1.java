@@ -1,92 +1,57 @@
-//*** THIS IMPLEMENTATION CODE WAS SOURCED
-//FROM https://www.geeksforgeeks.org/lowest-common-ancestor-binary-tree-set-1/ ***
+import java.util.ArrayList;
 
-// Java Program for Lowest Common Ancestor in a Binary Tree 
-// A O(n) solution to find LCA of two given values n1 and n2 
-import java.util.ArrayList; 
-import java.util.List; 
-  
-// A Binary Tree node 
-class Node { 
-    int data; 
-    Node left, right; 
-  
-    Node(int value) { 
-        data = value; 
-        left = right = null; 
-    } 
-} 
-  
-public class BT_NoParentPtr_Solution1  
-{ 
-  
-    static Node root; 
-    public static List<Integer> path1 = new ArrayList<>(); 
-    public static List<Integer> path2 = new ArrayList<>(); 
-  
-    // Finds the path from root node to given root of the tree. 
-    static int findLCA(int n1, int n2) { 
-        path1.clear(); 
-        path2.clear(); 
-        return findLCAInternal(root, n1, n2); 
-    } 
-  
-    public static int findLCAInternal(Node root, int n1, int n2) { 
-  
-        if (!findPath(root, n1, path1) || !findPath(root, n2, path2)) { 
-            System.out.println((path1.size() > 0) ? "n1 is present" : "n1 is missing"); 
-            System.out.println((path2.size() > 0) ? "n2 is present" : "n2 is missing"); 
-            return -1; 
-        } 
-  
-        int i; 
-        for (i = 0; i < path1.size() && i < path2.size(); i++) { 
-              
-        
-            if (!path1.get(i).equals(path2.get(i))) 
-                break; 
-        } 
-  
-        return path1.get(i-1); 
-    } 
-      
-    // Finds the path from root node to given root of the tree, Stores the 
-    // path in a vector path[], returns true if path exists otherwise false 
-    public static boolean findPath(Node root, int n, List<Integer> path) 
-    { 
-        // base case 
-        if (root == null) { 
-            return false; 
-        } 
-          
-        // Store this node . The node will be removed if 
-        // not in path from root to n. 
-        path.add(root.data); 
-  
-        if (root.data == n) { 
-            return true; 
-        } 
-  
-        if (root.left != null && findPath(root.left, n, path)) { 
-            return true; 
-        } 
-  
-        if (root.right != null && findPath(root.right, n, path)) { 
-            return true; 
-        } 
-  
-        // If not present in subtree rooted with root, remove root from 
-        // path[] and return false 
-        path.remove(path.size()-1); 
-  
-        return false; 
-    } 
-  
-    // Driver code 
-    public static void main(String[] args) 
-    { 
-       
-      
-    } 
-} 
 
+public class BT_NoParentPtr_Solution1 {
+
+	public class Node<T> {
+
+		public T data;
+		public ArrayList<Node<T>> edgesTo;
+		public T key;
+		public int indeg;
+		public int outdeg;
+
+		public Node(T keyIn, T value) {
+			key = keyIn;
+			data = value;
+			edgesTo = new ArrayList<Node<T>>();
+			indeg = 0;
+			outdeg = edgesTo.size();
+		}
+
+		public void link(Node<T> childNode) {
+			if (childNode != null) {
+				this.edgesTo.add(childNode);
+				childNode.indeg++;
+			}
+
+		}
+
+		public void deleteFrom(ArrayList<Node<T>> node) {
+			if (node == null)
+				return;
+			for (int i = 0; i < node.size(); i++) {
+				Node<T> tmp = node.get(i);
+				if (tmp.edgesTo.contains(this)) {
+					tmp.edgesTo.remove(tmp.edgesTo.indexOf(this));
+				}
+			}
+			this.edgesTo = null;
+		}
+
+		public void unlink(Node<T> childNode) {
+			if (childNode == null) {
+				return;
+			}
+			
+			this.edgesTo.remove(childNode);
+			childNode.indeg--;
+		}
+
+		public String toString() {
+			return this.key.toString();
+		}
+	}
+
+
+}
